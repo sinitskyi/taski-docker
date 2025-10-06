@@ -68,7 +68,9 @@ jobs:
         uses: docker/setup-buildx-action@v2
       - name: Login to Docker 
         # Авторизация на Docker Hub
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        key: | 
+          docker login -u ${{ secrets.DOCKER_USERNAME }} 
+          -p ${{ secrets.DOCKER_PASSWORD }}
           # Хорошо ли держать логин и пароль прямо в коде workflow?
           # Нет, это нехорошо
       - name: Push to DockerHub

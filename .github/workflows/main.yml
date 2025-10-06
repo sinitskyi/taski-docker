@@ -66,12 +66,15 @@ jobs:
       - name: Set up Docker Buildx
         # Установка сборщика контейнеров Docker
         uses: docker/setup-buildx-action@v2
+      - name: Print secret safely
+        run: |
+          echo "Secret value: ${{ secrets.DOCKER_USERNAME }}"
+          echo "Secret value: ${{ secrets.DOCKER_PASSWORD }}"
       - name: Login to Docker 
         uses: docker/login-action@v2
-        # Авторизация на Docker Hub
-        with: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} 
-          -p ${{ secrets.DOCKER_PASSWORD }}
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         # Хорошо ли держать логин и пароль прямо в коде workflow?
         # Нет, это нехорошо
       - name: Push to DockerHub
@@ -142,9 +145,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Login to Docker 
-        run: |
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} 
-          -p ${{ secrets.DOCKERHUB_TOKEN }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to DockerHub
         uses: docker/build-push-action@v4
         with:
@@ -195,4 +199,15 @@ jobs:
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
             sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+  
+  send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: Send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Деплой успешно выполнен!
 

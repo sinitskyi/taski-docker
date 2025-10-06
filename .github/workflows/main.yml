@@ -74,7 +74,7 @@ jobs:
           else
             echo "Secret is not set"
           fi
-          
+
       - name: Login to Docker 
         uses: docker/login-action@v2
         with:
@@ -215,4 +215,3 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: Деплой успешно выполнен!
-

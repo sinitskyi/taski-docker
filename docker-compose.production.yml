@@ -19,7 +19,6 @@ services:
   frontend:
     image: nik24rus/taski_frontend  # Качаем с Docker Hub
     env_file: .env
-    command: cp -r /app/build/. /frontend_static/
     volumes:
       - static_volume:/frontend_static
   gateway:
